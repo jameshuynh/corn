@@ -138,13 +138,11 @@ func generateProjectFolder(appPath string, database string) {
 	err := os.MkdirAll(appPath, 0755)
 	helpers.ExitOnError(err)
 
-	currDir, err := os.Getwd()
+	currDir, err := helpers.GetLatestBaseFolder()
 	helpers.ExitOnError(err)
 
 	err = os.Chdir(appPath)
 	helpers.ExitOnError(err)
-
-	exec.Command("git", "init").CombinedOutput()
 
 	c := color.New(color.FgGreen)
 	c.Printf("Setup module %v\n", projectName)
@@ -187,12 +185,15 @@ func generateProjectFolder(appPath string, database string) {
 
 	copyFiles(database, appPath, currDir)
 
+	exec.Command("chmod", "-R", "0755", ".").CombinedOutput()
 	c = color.New(color.FgGreen)
-	c.Println("\nCompleted!")
 
 	searchAndReplaceProjectName(projectName)
 	createDatabase(projectName, database)
 	searchAndReplaceSQLBoilerConfig()
+
+	exec.Command("git", "init").CombinedOutput()
+	c.Println("\nCompleted!")
 }
 
 func init() {

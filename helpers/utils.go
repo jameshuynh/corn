@@ -2,16 +2,20 @@ package helpers
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/fatih/color"
+	"github.com/kardianos/osext"
 )
 
 // SearchAndReplaceFiles searches all files in fullPath and replace
 func SearchAndReplaceFiles(fullPath string, replacers map[string]string) error {
 	fileOrDirList := []string{}
+
 	err := filepath.Walk(fullPath,
 		func(path string, f os.FileInfo, err error) error {
 			fileOrDirList = append(fileOrDirList, path)
@@ -38,6 +42,47 @@ func SearchAndReplaceFiles(fullPath string, replacers map[string]string) error {
 		}
 	}
 	return nil
+}
+
+func goPaths() []string {
+	return strings.Split(os.Getenv("GOPATH"), ":")
+}
+
+// GetLatestBaseFolder helps to identify what is the current base folder
+func GetLatestBaseFolder() (string, error) {
+	executableDir, err := osext.ExecutableFolder()
+	ExitOnError(err)
+
+	ret := filepath.Join(executableDir, "templates")
+	if _, err = os.Stat(ret); err == nil {
+		return executableDir, nil
+	}
+
+	currDir, err := os.Getwd()
+	ret = filepath.Join(currDir, "templates")
+	if _, err = os.Stat(ret); err == nil {
+		return currDir, nil
+	}
+
+	base := filepath.Join("pkg", "mod", "github.com", "jameshuynh")
+	srcDir := filepath.Join(filepath.Dir(executableDir), base)
+	files, _ := ioutil.ReadDir(srcDir)
+
+	latestFolder := ""
+	for _, f := range files {
+		if strings.Contains(f.Name(), "corn@v") &&
+			!strings.Contains(f.Name(), "templates") {
+			latestFolder = f.Name()
+		}
+	}
+
+	ret = filepath.Join(srcDir, latestFolder)
+
+	if _, err = os.Stat(ret); err == nil {
+		return ret, nil
+	}
+
+	return "", fmt.Errorf("Unable to find corn's directory")
 }
 
 // ExitOnError will print out the error and exit
