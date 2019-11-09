@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "corn/cmd"
+import "github.com/jameshuynh/corn/cmd"
 
 func main() {
 	cmd.Execute()

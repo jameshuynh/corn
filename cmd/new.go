@@ -22,7 +22,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"corn/helpers"
+	"github.com/jameshuynh/corn/helpers"
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
@@ -96,7 +96,7 @@ func searchAndReplaceProjectName(projectName string) {
 	helpers.SearchAndReplaceFiles(".", replacers)
 }
 
-func searchAndReplaceSqlBoilerConfig() {
+func searchAndReplaceSQLBoilerConfig() {
 	replacers := map[string]string{
 		"wd = wd + strings.Repeat(\"/..\", outputDirDepth)": "wd = wd + strings.Repeat(\"/../config\", outputDirDepth)",
 	}
@@ -192,7 +192,7 @@ func generateProjectFolder(appPath string, database string) {
 
 	searchAndReplaceProjectName(projectName)
 	createDatabase(projectName, database)
-	searchAndReplaceSqlBoilerConfig()
+	searchAndReplaceSQLBoilerConfig()
 }
 
 func init() {

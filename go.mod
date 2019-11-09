@@ -1,4 +1,4 @@
-module corn
+module github.com/jameshuynh/corn
 
 go 1.13
 
