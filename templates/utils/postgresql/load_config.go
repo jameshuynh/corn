@@ -10,9 +10,10 @@ import (
 
 // Config Type for MySql
 type Config struct {
-	db postgresql
+	Psql postgresql
 }
 
+// Psql
 type postgresql struct {
 	Dbname   string
 	Host     string
