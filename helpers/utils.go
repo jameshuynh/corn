@@ -82,6 +82,24 @@ func GetLatestBaseFolder() (string, error) {
 		return ret, nil
 	}
 
+	base = filepath.Join("src", "github.com", "jameshuynh")
+	srcDir = filepath.Join(filepath.Dir(executableDir), base)
+	files, _ = ioutil.ReadDir(srcDir)
+
+	latestFolder = ""
+	for _, f := range files {
+		if strings.Contains(f.Name(), "corn") &&
+			!strings.Contains(f.Name(), "templates") {
+			latestFolder = f.Name()
+		}
+	}
+
+	ret = filepath.Join(srcDir, latestFolder)
+
+	if _, err = os.Stat(ret); err == nil {
+		return ret, nil
+	}
+
 	return "", fmt.Errorf("Unable to find corn's directory")
 }
 
