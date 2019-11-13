@@ -6,15 +6,27 @@ import (
 )
 
 // OpenDB open database
-func OpenDB() *sql.DB {
-	config, err := LoadConfig("./config/sqlboiler.toml")
+func OpenDB(env string) *sql.DB {
+	config, err := LoadDBConfig("./config/sqlboiler.toml")
 	if err != nil {
 		panic(err)
 	}
 
+	var dbConfig postgresql
+
+	if env == "development" {
+		dbConfig = config.Development
+	} else if env == "production" {
+		dbConfig = config.Production
+	} else if env == "staging" {
+		dbConfig = config.Staging
+	} else if env == "test" {
+		dbConfig = config.Test
+	}
+
 	psqlInfo := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
-		config.Psql.User, config.Psql.Password,
-		config.Psql.Host, config.Psql.Port, config.Psql.Dbname)
+		dbConfig.User, dbConfig.Password,
+		dbConfig.Host, dbConfig.Port, dbConfig.Dbname)
 	fmt.Println(psqlInfo)
 	db, err := sql.Open("postgres", psqlInfo)
 

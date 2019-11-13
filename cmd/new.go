@@ -97,14 +97,15 @@ func searchAndReplaceProjectName(projectName string) {
 }
 
 func searchAndReplaceSQLBoilerConfig() {
-	replacers := map[string]string{
-		"wd = wd + strings.Repeat(\"/..\", outputDirDepth)": "wd = wd + strings.Repeat(\"/../config\", outputDirDepth)",
-	}
+	replacers := make(map[string]string)
+	replacers["wd = wd + strings.Repeat(\"/..\", outputDirDepth)"] =
+		"wd = wd + strings.Repeat(\"/../config\", outputDirDepth)"
+	replacers["GetString(\"psql."] = "GetString(\"test."
 	helpers.SearchAndReplaceFiles(".", replacers)
 }
 
-func createDatabase(dbName string, databaseType string) {
-	dbName = fmt.Sprintf("%s-dev", dbName)
+func createDatabase(dbName string, databaseType string, env string) {
+	dbName = fmt.Sprintf("%s-%s", dbName, env)
 	if databaseType == "postgresql" {
 		exec.
 			Command("dropdb", dbName).
@@ -115,9 +116,6 @@ func createDatabase(dbName string, databaseType string) {
 		exec.
 			Command("psql", "-U", "postgres", "-d", dbName, "-f", "db/database.sql").
 			CombinedOutput()
-		exec.
-			Command("go", "generate").
-			CombinedOutput()
 	} else if databaseType == "mysql" {
 		// *TODO: do for mysql
 		exec.
@@ -127,6 +125,8 @@ func createDatabase(dbName string, databaseType string) {
 			Command(fmt.Sprintf("echo \"create database `%s`\" | mysql -u root -p", dbName)).
 			CombinedOutput()
 	}
+
+	fmt.Printf("created database %s\n", dbName)
 }
 
 func generateProjectFolder(appPath string, database string) {
@@ -189,7 +189,14 @@ func generateProjectFolder(appPath string, database string) {
 	c = color.New(color.FgGreen)
 
 	searchAndReplaceProjectName(projectName)
-	createDatabase(projectName, database)
+	fmt.Println()
+	createDatabase(projectName, database, "development")
+	createDatabase(projectName, database, "test")
+
+	exec.
+		Command("corn", "sqlboiler").
+		CombinedOutput()
+
 	searchAndReplaceSQLBoilerConfig()
 
 	exec.Command("git", "init").CombinedOutput()

@@ -1,5 +1,21 @@
-[psql]
+[development]
   dbname  = "{{APP_NAME}}-dev"
+  host    = "127.0.0.1"
+  port    = 5432
+  user    = "postgres"
+  password = ""
+  sslMode = "disable"
+
+[test]
+  dbname  = "{{APP_NAME}}-test"
+  host    = "127.0.0.1"
+  port    = 5432
+  user    = "postgres"
+  password = ""
+  sslMode = "disable"
+
+[production]
+  dbname  = "{{APP_NAME}}-production"
   host    = "127.0.0.1"
   port    = 5432
   user    = "postgres"
