@@ -4,9 +4,13 @@ go 1.13
 
 require (
 	github.com/BurntSushi/toml v0.3.1
+	github.com/elliotchance/pie v1.34.0
 	github.com/fatih/color v1.7.0
 	github.com/fatih/structtag v1.1.0 // indirect
 	github.com/friendsofgo/errors v0.9.2 // indirect
+	github.com/gertd/go-pluralize v0.1.1
+	github.com/huandu/go-sqlbuilder v1.6.0
+	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect

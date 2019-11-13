@@ -21,9 +21,28 @@ type postgresql struct {
 	Dbname   string
 	Host     string
 	Port     int64
+	Adapter  string
 	User     string
 	Password string
 	Sslmode  string
+}
+
+// GenerateDBConfigString generates the config for migration
+func GenerateDBConfigString() (string, string) {
+	config, err := LoadDBConfig("./config/sqlboiler.toml")
+	if err != nil {
+		panic(err)
+	}
+
+	dbConfig := config.Development
+	return fmt.Sprintf(
+		"user=%s password=%s host=%s port=%d dbname=%s sslmode=disable",
+		dbConfig.User,
+		dbConfig.Password,
+		dbConfig.Host,
+		dbConfig.Port,
+		dbConfig.Dbname,
+	), dbConfig.Adapter
 }
 
 // LoadDBConfig is used to load database config

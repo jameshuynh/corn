@@ -96,14 +96,6 @@ func searchAndReplaceProjectName(projectName string) {
 	helpers.SearchAndReplaceFiles(".", replacers)
 }
 
-func searchAndReplaceSQLBoilerConfig() {
-	replacers := make(map[string]string)
-	replacers["wd = wd + strings.Repeat(\"/..\", outputDirDepth)"] =
-		"wd = wd + strings.Repeat(\"/../config\", outputDirDepth)"
-	replacers["GetString(\"psql."] = "GetString(\"test."
-	helpers.SearchAndReplaceFiles(".", replacers)
-}
-
 func createDatabase(dbName string, databaseType string, env string) {
 	dbName = fmt.Sprintf("%s-%s", dbName, env)
 	if databaseType == "postgresql" {
@@ -153,34 +145,48 @@ func generateProjectFolder(appPath string, database string) {
 	c = color.New(color.FgBlue)
 	c.Println("Install dependencies:")
 
-	fmt.Println("Getting Echo...")
+	fmt.Println("Getting github.com/labstack/echo...")
 	exec.
 		Command("go", "get", "-u", "github.com/labstack/echo/...").
 		CombinedOutput()
 
-	fmt.Println("Getting SQLBoiler...")
+	fmt.Println("Getting github.com/volatiletech/sqlboiler...")
 	exec.
 		Command("go", "get", "-u", "github.com/volatiletech/sqlboiler/...").
 		CombinedOutput()
 
 	if database == "mysql" {
+		fmt.Println(
+			"Getting github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql...")
 		exec.Command("go", "get",
 			"github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql").
 			CombinedOutput()
 	} else if database == "postgresql" {
+		fmt.Println(
+			"Getting github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql...")
 		exec.Command("go", "get",
 			"github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql").
 			CombinedOutput()
 	}
 
-	fmt.Println("Getting toml...")
+	fmt.Println("Getting github.com/BurntSushi/toml...")
 	exec.
 		Command("go", "get", "github.com/BurntSushi/toml").
 		CombinedOutput()
 
-	fmt.Println("Getting Pie for Slice...")
+	fmt.Println("Getting github.com/elliotchance/pie...")
 	exec.
 		Command("go", "get", "-u", "github.com/elliotchance/pie").
+		CombinedOutput()
+
+	fmt.Println("Getting github.com/volatiletech/mig...")
+	exec.
+		Command("go", "get", "-u", "github.com/volatiletech/mig/...").
+		CombinedOutput()
+
+	fmt.Println("Getting sql-formatter-cli")
+	exec.
+		Command("npm", "i", "-g", "sql-formatter-cli").
 		CombinedOutput()
 
 	copyFiles(database, appPath, currDir)
@@ -193,11 +199,10 @@ func generateProjectFolder(appPath string, database string) {
 	createDatabase(projectName, database, "development")
 	createDatabase(projectName, database, "test")
 
+	fmt.Println("Generate SQL Boiler models...")
 	exec.
 		Command("corn", "sqlboiler").
 		CombinedOutput()
-
-	searchAndReplaceSQLBoilerConfig()
 
 	exec.Command("git", "init").CombinedOutput()
 	c.Println("\nCompleted!")
