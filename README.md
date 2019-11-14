@@ -23,6 +23,12 @@ This is used to generate a project with the followings:
 corn new <project_name> --database=postgresql
 ```
 
+After that you can run this project by executing:
+
+```bash
+go run main.go
+```
+
 ### 2. Create database
 
 ```bash
