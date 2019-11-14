@@ -16,7 +16,12 @@ var db *sql.DB
 func main() {
 	e := echo.New()
 
-	db = utils.OpenDB()
+  env := os.Getenv("GOENV")
+	if env == "" {
+		env = "development"
+	}
+
+	db = utils.OpenDB(env)
 	boil.SetDB(db)
 	defer db.Close()
 

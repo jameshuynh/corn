@@ -10,14 +10,14 @@ import (
 
 // DBConfig Type for MySql
 type DBConfig struct {
-	Development postgresql
-	Test        postgresql
-	Staging     postgresql
-	Production  postgresql
+	Development Postgresql
+	Test        Postgresql
+	Staging     Postgresql
+	Production  Postgresql
 }
 
-// Psql
-type postgresql struct {
+// Postgresql is postgresql struct to expose data of db connection
+type Postgresql struct {
 	Dbname   string
 	Host     string
 	Port     int64
@@ -27,6 +27,24 @@ type postgresql struct {
 	Sslmode  string
 }
 
+// RetrieveDBConfig helps to get the DBConfig for an environment
+func RetrieveDBConfig(environment string) Postgresql {
+	config, err := LoadDBConfig("./config/sqlboiler.toml")
+	if err != nil {
+		panic(err)
+	}
+
+	if environment == "development" {
+		return config.Development
+	} else if environment == "test" {
+		return config.Test
+	} else if environment == "production" {
+		return config.Production
+	}
+
+	panic(fmt.Errorf("Environment %s is not supported", environment))
+}
+
 // GenerateDBConfigString generates the config for migration
 func GenerateDBConfigString(environment string) (string, string) {
 	config, err := LoadDBConfig("./config/sqlboiler.toml")
@@ -34,7 +52,7 @@ func GenerateDBConfigString(environment string) (string, string) {
 		panic(err)
 	}
 
-	var dbConfig postgresql
+	var dbConfig Postgresql
 
 	if environment == "development" {
 		dbConfig = config.Development
