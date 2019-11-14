@@ -7,7 +7,7 @@ This is used to generate a project with the followings:
 
 ## Prerequisites
 
-- PostgreSQL or MySQL if you choose to use a database.
+- PostgreSQL database (MySQL will be added later)
 - Go programming language, version 1.3.x or newer with go mod
 - Ensure `$GOPATH/bin` is in your `$PATH`. Example: `PATH=$PATH:$GOPATH/bin`
 
