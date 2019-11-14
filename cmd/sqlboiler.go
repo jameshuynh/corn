@@ -44,9 +44,10 @@ func boilerGeneratorForPsql() {
 	exec.Command(
 		"chmod", "-R", "0755", "config/sqlboiler_test.toml",
 	).CombinedOutput()
-	exec.Command(
+	output, err := exec.Command(
 		"sqlboiler", "-c", "config/sqlboiler_test.toml", "--wipe", "psql",
 	).CombinedOutput()
+	fmt.Println(string(output), err)
 	exec.Command("rm", "-rf", "config/sqlboiler_test.toml").CombinedOutput()
 
 	searchAndReplaceSQLBoilerConfig()

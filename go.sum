@@ -24,6 +24,7 @@ github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZm
 github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8PWV+bWy6jNmig1y/TA+kYO4g3RSRF0IAv0no=
 github.com/elliotchance/pie v1.34.0 h1:BZEckuK+QlmOwVs2fWMaX6O5nRKkQOAJ2lTO0BH78pQ=
 github.com/elliotchance/pie v1.34.0/go.mod h1:W/nLuTGZ1dLKzRS0Z2g2N2evWzMenuDnBhk0s6Y9k54=
+github.com/elliotchance/testify-stats v1.0.0 h1:CMcRBfQIB0WwT1+aY38MM4ShFqhPyP6jkHRytSvXLzI=
 github.com/elliotchance/testify-stats v1.0.0/go.mod h1:Mc25k7L4E65uf6CfW+s/pY04XcoiqQBrfIRsWQcgweA=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=

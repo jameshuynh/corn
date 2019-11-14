@@ -28,13 +28,19 @@ type postgresql struct {
 }
 
 // GenerateDBConfigString generates the config for migration
-func GenerateDBConfigString() (string, string) {
+func GenerateDBConfigString(environment string) (string, string) {
 	config, err := LoadDBConfig("./config/sqlboiler.toml")
 	if err != nil {
 		panic(err)
 	}
 
-	dbConfig := config.Development
+	var dbConfig postgresql
+
+	if environment == "development" {
+		dbConfig = config.Development
+	} else if environment == "test" {
+		dbConfig = config.Test
+	}
 	return fmt.Sprintf(
 		"user=%s password=%s host=%s port=%d dbname=%s sslmode=disable",
 		dbConfig.User,

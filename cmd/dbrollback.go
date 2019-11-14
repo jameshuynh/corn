@@ -10,9 +10,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func rollback(args []string) {
+func roolbackForEnvironment(environment string) {
 	usr, _ := user.Current()
-	dbConfig, adapter := helpers.GenerateDBConfigString()
+	dbConfig, adapter := helpers.GenerateDBConfigString(environment)
 	if adapter == "psql" {
 		adapter = "postgres"
 	} else if adapter == "mysql" {
@@ -22,7 +22,11 @@ func rollback(args []string) {
 		usr.HomeDir+"/go/bin/mig", "down", adapter, dbConfig, "-d", "db/migrations",
 	).CombinedOutput()
 	fmt.Println(string(output))
+}
 
+func rollback(args []string) {
+	roolbackForEnvironment("development")
+	roolbackForEnvironment("test")
 }
 
 var rollbackCmd = &cobra.Command{

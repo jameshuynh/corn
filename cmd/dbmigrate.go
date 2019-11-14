@@ -10,9 +10,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func migrate(args []string) {
+func migrateForEnvironment(environment string) {
 	usr, _ := user.Current()
-	dbConfig, adapter := helpers.GenerateDBConfigString()
+	dbConfig, adapter := helpers.GenerateDBConfigString(environment)
 	if adapter == "psql" {
 		adapter = "postgres"
 	} else if adapter == "mysql" {
@@ -22,6 +22,16 @@ func migrate(args []string) {
 		usr.HomeDir+"/go/bin/mig", "up", adapter, dbConfig, "-d", "db/migrations",
 	).CombinedOutput()
 	fmt.Println(string(output))
+	if environment == "test" {
+		exec.Command("corn", "sqlboiler").CombinedOutput()
+	}
+}
+
+func migrate(args []string) {
+	fmt.Println("Migrating for development db...")
+	migrateForEnvironment("development")
+	fmt.Println("Migrating for test db...")
+	migrateForEnvironment("test")
 }
 
 var migrateCmd = &cobra.Command{
