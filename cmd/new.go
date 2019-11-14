@@ -18,6 +18,7 @@ limitations under the License.
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
@@ -96,7 +97,9 @@ func searchAndReplaceProjectName(projectName string) {
 	helpers.SearchAndReplaceFiles(".", replacers)
 }
 
-func createDatabase(dbName string, databaseType string, env string) {
+func createDatabase(
+	dbName string, databaseType string, env string, currDir string,
+) {
 	dbName = fmt.Sprintf("%s-%s", dbName, env)
 	if databaseType == "postgresql" {
 		exec.
@@ -106,15 +109,30 @@ func createDatabase(dbName string, databaseType string, env string) {
 			Command("createdb", dbName, "--encoding=utf-8").
 			CombinedOutput()
 		exec.
-			Command("psql", "-U", "postgres", "-d", dbName, "-f", "db/database.sql").
+			Command("mkdir", "-p", "db/migrations").
 			CombinedOutput()
+
+		if env == "development" {
+			output, _ := exec.
+				Command("corn", "g", "migration", "create_users").
+				CombinedOutput()
+
+			filePath := strings.TrimSpace(strings.Split(string(output), " ")[1])
+			createUsersSQL, _ :=
+				ioutil.ReadFile(
+					currDir + "/templates/db/" + databaseType + "/create_users.sql")
+			ioutil.WriteFile(filePath, []byte(createUsersSQL), 0755)
+			exec.Command("chmod", "-R", "0755", "db/migrations").CombinedOutput()
+		}
 	} else if databaseType == "mysql" {
 		// *TODO: do for mysql
 		exec.
-			Command(fmt.Sprintf("echo \"drop database `%s`\" | mysql -u root -p", dbName)).
+			Command(
+				fmt.Sprintf("echo \"drop database `%s`\" | mysql -u root -p", dbName)).
 			CombinedOutput()
 		exec.
-			Command(fmt.Sprintf("echo \"create database `%s`\" | mysql -u root -p", dbName)).
+			Command(
+				fmt.Sprintf("echo \"create database `%s`\" | mysql -u root -p", dbName)).
 			CombinedOutput()
 	}
 
@@ -196,8 +214,8 @@ func generateProjectFolder(appPath string, database string) {
 
 	searchAndReplaceProjectName(projectName)
 	fmt.Println()
-	createDatabase(projectName, database, "development")
-	createDatabase(projectName, database, "test")
+	createDatabase(projectName, database, "development", currDir)
+	createDatabase(projectName, database, "test", currDir)
 
 	fmt.Println("Generate SQL Boiler models...")
 	exec.
