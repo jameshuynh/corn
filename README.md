@@ -29,6 +29,8 @@ After that you can run this project by executing:
 go run main.go
 ```
 
+And visit http://localhost:3000
+
 ### 2. Create database
 
 ```bash
