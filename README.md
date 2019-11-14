@@ -14,6 +14,47 @@ This is used to generate a project with the followings:
 ## Installation
 
 - `go get github.com/jameshuynh/corn`
-- `corn new <project-name> --database={postgresql|mysql}`
-- Start using it: `cd <project-name> && go run main.go`
-- Visit http://localhost:3000
+
+## Usage
+
+### 1. Create a new app
+
+```bash
+corn new <project_name> --database=postgresql
+```
+
+### 2. Create database
+
+```bash
+corn db:create
+```
+
+### 3. Drop database
+
+```bash
+corn db:drop
+```
+
+### 4. Generate a new model
+
+```bash
+corn g model post title description:text
+```
+
+### 5. Generate a blank new migration file
+
+```bash
+corn g migration create_cars
+```
+
+### 6. Run migration
+
+```bash
+corn g db:migrate
+```
+
+### 7. Rollback a migration
+
+```bash
+corn g db:rollback
+```
