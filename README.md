@@ -58,11 +58,11 @@ corn g migration create_cars
 ### 6. Run migration
 
 ```bash
-corn g db:migrate
+corn db:migrate
 ```
 
 ### 7. Rollback a migration
 
 ```bash
-corn g db:rollback
+corn db:rollback
 ```
