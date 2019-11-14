@@ -13,7 +13,12 @@ func searchAndReplaceSQLBoilerConfig() {
 	replacers := make(map[string]string)
 	replacers["wd = wd + strings.Repeat(\"/..\", outputDirDepth)"] =
 		"wd = wd + strings.Repeat(\"/../config\", outputDirDepth)"
+	replacers["\"sqlboiler\"))"] = "\"database\"))"
+	replacers["viper.SetConfigName(\"sqlboiler\")"] =
+		"viper.SetConfigName(\"database\")"
 	replacers["GetString(\"psql."] = "GetString(\"test."
+	replacers["GetInt(\"psql."] = "GetInt(\"test."
+	replacers["\"psql."] = "\"test."
 	helpers.SearchAndReplaceFiles(".", replacers)
 }
 
@@ -22,7 +27,7 @@ func boilerGeneratorForMysql() {
 }
 
 func boilerGeneratorForPsql() {
-	config, _ := helpers.LoadDBConfig("./config/sqlboiler.toml")
+	config, _ := helpers.LoadDBConfig("./config/database.toml")
 	dbConfig := config.Test
 	data := []byte(
 		fmt.Sprintf(
@@ -37,18 +42,18 @@ func boilerGeneratorForPsql() {
 			dbConfig.User, dbConfig.Password, dbConfig.Sslmode,
 		),
 	)
-	err := ioutil.WriteFile("config/sqlboiler_test.toml", data, 0755)
+	err := ioutil.WriteFile("config/database_test.toml", data, 0755)
 	if err != nil {
 		panic(err)
 	}
 	exec.Command(
-		"chmod", "-R", "0755", "config/sqlboiler_test.toml",
+		"chmod", "-R", "0755", "config/database_test.toml",
 	).CombinedOutput()
 	output, err := exec.Command(
-		"sqlboiler", "-c", "config/sqlboiler_test.toml", "--wipe", "psql",
+		"sqlboiler", "-c", "config/database_test.toml", "--wipe", "psql",
 	).CombinedOutput()
 	fmt.Println(string(output), err)
-	exec.Command("rm", "-rf", "config/sqlboiler_test.toml").CombinedOutput()
+	exec.Command("rm", "-rf", "config/database_test.toml").CombinedOutput()
 
 	searchAndReplaceSQLBoilerConfig()
 }
@@ -58,7 +63,7 @@ var sqlboilerCmd = &cobra.Command{
 	Short: "Generate SQLBoiler",
 	Long:  "Generate SQLBoiler",
 	Run: func(cmd *cobra.Command, args []string) {
-		config, _ := helpers.LoadDBConfig("./config/sqlboiler.toml")
+		config, _ := helpers.LoadDBConfig("./config/database.toml")
 		if config.Test.Adapter == "psql" {
 			boilerGeneratorForPsql()
 		} else if config.Test.Adapter == "mysql" {

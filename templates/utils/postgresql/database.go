@@ -7,7 +7,7 @@ import (
 
 // OpenDB open database
 func OpenDB(env string) *sql.DB {
-	config, err := LoadDBConfig("./config/sqlboiler.toml")
+	config, err := LoadDBConfig("./config/database.toml")
 	if err != nil {
 		panic(err)
 	}

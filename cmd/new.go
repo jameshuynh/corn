@@ -82,12 +82,6 @@ func copyFiles(database string, appPath string, currDir string) {
 		fmt.Sprintf("%s/templates/config/%s/", currDir, database),
 		"config",
 	).CombinedOutput()
-
-	exec.Command(
-		"cp", "-rf",
-		fmt.Sprintf("%s/templates/db/%s/", currDir, database),
-		"db",
-	).CombinedOutput()
 }
 
 func searchAndReplaceProjectName(projectName string) {
@@ -123,6 +117,7 @@ func createDatabase(
 					currDir + "/templates/db/" + databaseType + "/create_users.sql")
 			ioutil.WriteFile(filePath, []byte(createUsersSQL), 0755)
 			exec.Command("chmod", "-R", "0755", "db/migrations").CombinedOutput()
+			searchAndReplaceSQLBoilerConfig()
 		}
 	} else if databaseType == "mysql" {
 		// *TODO: do for mysql

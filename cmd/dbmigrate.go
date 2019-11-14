@@ -32,6 +32,7 @@ func migrate(args []string) {
 	migrateForEnvironment("development")
 	fmt.Println("Migrating for test db...")
 	migrateForEnvironment("test")
+	searchAndReplaceSQLBoilerConfig()
 }
 
 var migrateCmd = &cobra.Command{

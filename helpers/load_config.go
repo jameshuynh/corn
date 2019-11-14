@@ -29,7 +29,7 @@ type Postgresql struct {
 
 // RetrieveDBConfig helps to get the DBConfig for an environment
 func RetrieveDBConfig(environment string) Postgresql {
-	config, err := LoadDBConfig("./config/sqlboiler.toml")
+	config, err := LoadDBConfig("./config/database.toml")
 	if err != nil {
 		panic(err)
 	}
@@ -47,7 +47,7 @@ func RetrieveDBConfig(environment string) Postgresql {
 
 // GenerateDBConfigString generates the config for migration
 func GenerateDBConfigString(environment string) (string, string) {
-	config, err := LoadDBConfig("./config/sqlboiler.toml")
+	config, err := LoadDBConfig("./config/database.toml")
 	if err != nil {
 		panic(err)
 	}
