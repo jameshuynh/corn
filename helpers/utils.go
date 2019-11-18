@@ -78,7 +78,7 @@ func GetLatestBaseFolder() (string, error) {
 
 	ret = filepath.Join(srcDir, latestFolder)
 
-	if _, err = os.Stat(ret); err == nil {
+	if _, err = os.Stat(ret); err == nil && latestFolder != "" {
 		return ret, nil
 	}
 

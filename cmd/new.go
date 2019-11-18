@@ -65,6 +65,7 @@ func copyFiles(database string, appPath string, currDir string) {
 		Command("mkdir", "-p", "db").
 		CombinedOutput()
 
+	fmt.Println(currDir)
 	exec.Command(
 		"cp", "-rf",
 		fmt.Sprintf("%s/templates/utils/%s/", currDir, database),
