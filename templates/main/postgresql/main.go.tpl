@@ -2,7 +2,7 @@ package main
 
 import (
 	"database/sql"
-	"{{APP_NAME}}/utils"
+	"{{.AppName}}/utils"
 	"net/http"
 	"os"
 

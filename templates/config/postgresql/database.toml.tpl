@@ -1,5 +1,5 @@
 [development]
-  dbname  = "{{APP_NAME}}-dev"
+  dbname  = "{{.AppName}}-dev"
   host    = "127.0.0.1"
   port    = 5432
   user    = "postgres"
@@ -8,7 +8,7 @@
   sslMode = "disable"
 
 [test]
-  dbname  = "{{APP_NAME}}-test"
+  dbname  = "{{.AppName}}-test"
   host    = "127.0.0.1"
   port    = 5432
   user    = "postgres"
@@ -17,7 +17,7 @@
   sslMode = "disable"
 
 [production]
-  dbname  = "{{APP_NAME}}-production"
+  dbname  = "{{.AppName}}-production"
   host    = "127.0.0.1"
   port    = 5432
   user    = "postgres"
