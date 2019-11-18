@@ -37,7 +37,8 @@ func boilerGeneratorForPsql() {
 	port = "%d"
 	user = "%s"
 	password = "%s"
-	sslMode = "%s"`,
+	sslMode = "%s"
+	blacklist = ["mig_migrations"]`,
 			dbConfig.Dbname, dbConfig.Host, dbConfig.Port,
 			dbConfig.User, dbConfig.Password, dbConfig.Sslmode,
 		),
