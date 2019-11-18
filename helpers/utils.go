@@ -34,9 +34,11 @@ func SearchAndReplaceFiles(fullPath string, replacers map[string]string) error {
 				newContentBytes :=
 					bytes.Replace(contentBytes, []byte(oldString), []byte(newString), -1)
 
-				err := ioutil.WriteFile(fileOrDir, newContentBytes, fileInfo.Mode())
-				if err != nil {
-					return err
+				if strings.HasPrefix(fileOrDir, ".git") == false {
+					err := ioutil.WriteFile(fileOrDir, newContentBytes, fileInfo.Mode())
+					if err != nil {
+						return err
+					}
 				}
 			}
 		}
@@ -96,7 +98,7 @@ func GetLatestBaseFolder() (string, error) {
 
 	ret = filepath.Join(srcDir, latestFolder)
 
-	if _, err = os.Stat(ret); err == nil {
+	if _, err = os.Stat(ret); err == nil && latestFolder != "" {
 		return ret, nil
 	}
 
