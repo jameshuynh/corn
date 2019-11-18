@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/fatih/color"
@@ -31,8 +32,19 @@ func SearchAndReplaceFiles(fullPath string, replacers map[string]string) error {
 		if !fileInfo.IsDir() {
 			for oldString, newString := range replacers {
 				contentBytes, _ := ioutil.ReadFile(fileOrDir)
-				newContentBytes :=
-					bytes.Replace(contentBytes, []byte(oldString), []byte(newString), -1)
+				var newContentBytes []byte
+				if strings.HasPrefix(oldString, "REGEXP-") {
+					regStr := strings.Split(oldString, "REGEXP-")[1]
+					r, err := regexp.Compile(regStr)
+					if err != nil {
+						panic(err)
+					}
+					newContentBytes =
+						r.ReplaceAll(contentBytes, []byte(newString))
+				} else {
+					newContentBytes =
+						bytes.Replace(contentBytes, []byte(oldString), []byte(newString), -1)
+				}
 
 				if strings.HasPrefix(fileOrDir, ".git") == false {
 					err := ioutil.WriteFile(fileOrDir, newContentBytes, fileInfo.Mode())
