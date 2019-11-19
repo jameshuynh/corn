@@ -17,7 +17,9 @@ limitations under the License.
 */
 
 import (
+	"bufio"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -28,6 +30,10 @@ import (
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
+
+type AppData struct {
+	appName string
+}
 
 // corn new path --database=mysql
 // corn new path --database=postgresql
@@ -83,6 +89,42 @@ func copyFiles(database string, appPath string, currDir string) {
 		fmt.Sprintf("%s/templates/config/%s/", currDir, database),
 		"config",
 	).CombinedOutput()
+
+	exec.Command(
+		"cp", "-rf",
+		fmt.Sprintf("%s/templates/config/*", currDir),
+		"config",
+	).CombinedOutput()
+}
+
+func updateRouteRequest(appName string) {
+	data, _ := ioutil.ReadFile("config/route_request.go.tpl")
+	tmpl, _ :=
+		template.
+			New("route_request").
+			Parse(string(data))
+	f, _ := os.Create("config/route_request.go")
+	w := bufio.NewWriter(f)
+	appData := AppData{appName: appName}
+	tmpl.Execute(w, appData)
+	f.Close()
+
+	exec.Command("rm", "-rf", "config/route_request.go.tpl").CombinedOutput()
+}
+
+func updateDatabaseToml(appName string) {
+	data, _ := ioutil.ReadFile("config/database.toml.tpl")
+	tmpl, _ :=
+		template.
+			New("route_request").
+			Parse(string(data))
+	f, _ := os.Create("config/route_request.go")
+	w := bufio.NewWriter(f)
+	appData := AppData{appName: appName}
+	tmpl.Execute(w, appData)
+	f.Close()
+
+	exec.Command("rm", "-rf", "config/route_request.go.tpl").CombinedOutput()
 }
 
 func searchAndReplaceProjectName(projectName string) {
@@ -204,6 +246,7 @@ func generateProjectFolder(appPath string, database string) {
 		CombinedOutput()
 
 	copyFiles(database, appPath, currDir)
+	updateRouteRequest(projectName)
 
 	exec.Command("chmod", "-R", "0755", ".").CombinedOutput()
 	c = color.New(color.FgGreen)
