@@ -64,6 +64,24 @@ func copyFiles(database string, appPath string, currDir string) {
 		Command("mkdir", "-p", "utils").
 		CombinedOutput()
 	exec.
+		Command("mkdir", "-p", "controllers").
+		CombinedOutput()
+	exec.
+		Command("touch", "controllers/.keep").
+		CombinedOutput()
+	exec.
+		Command("mkdir", "-p", "models").
+		CombinedOutput()
+	exec.
+		Command("touch", "models/.keep").
+		CombinedOutput()
+	exec.
+		Command("mkdir", "-p", "lib").
+		CombinedOutput()
+	exec.
+		Command("touch", "lib/.keep").
+		CombinedOutput()
+	exec.
 		Command("mkdir", "-p", "config").
 		CombinedOutput()
 	exec.
