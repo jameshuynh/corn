@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	"{{.AppName}}/utils"
+	"{{.Module}}/utils"
 
 	"github.com/fatih/color"
 	"github.com/labstack/echo"

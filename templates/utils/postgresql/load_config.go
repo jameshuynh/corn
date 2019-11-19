@@ -8,7 +8,7 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-// DBConfig Type for MySql
+// DBConfig Type for Database
 type DBConfig struct {
 	Development postgresql
 	Test        postgresql
@@ -16,7 +16,6 @@ type DBConfig struct {
 	Production  postgresql
 }
 
-// Psql
 type postgresql struct {
 	Dbname   string
 	Host     string

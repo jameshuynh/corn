@@ -11,9 +11,10 @@ require (
 	github.com/gertd/go-pluralize v0.1.1
 	github.com/huandu/go-sqlbuilder v1.6.0
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
+	github.com/integralist/go-findroot v0.0.0-20160518114804-ac90681525dc
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/labstack/echo v3.3.10+incompatible
-	github.com/labstack/gommon v0.3.0 // indirect
+	github.com/labstack/gommon v0.3.0
 	github.com/lib/pq v1.2.0 // indirect
 	github.com/markbates/refresh v1.8.0
 	github.com/mattn/go-colorable v0.1.4 // indirect
@@ -29,10 +30,11 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.5.0
-	github.com/valyala/fasttemplate v1.1.0 // indirect
+	github.com/valyala/fasttemplate v1.1.0
 	github.com/volatiletech/inflect v0.0.0-20170731032912-e7201282ae8d // indirect
 	github.com/volatiletech/sqlboiler v3.6.1+incompatible
 	golang.org/x/sys v0.0.0-20191110163157-d32e6e3b99c4 // indirect
 	golang.org/x/tools v0.0.0-20191109212701-97ad0ed33101 // indirect
+	gopkg.in/testfixtures.v2 v2.6.0
 	gopkg.in/yaml.v2 v2.2.5 // indirect
 )

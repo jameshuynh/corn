@@ -17,7 +17,6 @@ limitations under the License.
 */
 
 import (
-	"bufio"
 	"fmt"
 	"html/template"
 	"io/ioutil"
@@ -31,8 +30,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type AppData struct {
-	appName string
+type appData struct {
+	Module string
 }
 
 // corn new path --database=mysql
@@ -70,8 +69,10 @@ func copyFiles(database string, appPath string, currDir string) {
 	exec.
 		Command("mkdir", "-p", "db").
 		CombinedOutput()
+	exec.
+		Command("mkdir", "-p", "spec").
+		CombinedOutput()
 
-	fmt.Println(currDir)
 	exec.Command(
 		"cp", "-rf",
 		fmt.Sprintf("%s/templates/utils/%s/", currDir, database),
@@ -80,8 +81,8 @@ func copyFiles(database string, appPath string, currDir string) {
 
 	exec.Command(
 		"cp", "-rf",
-		fmt.Sprintf("%s/templates/main/%s/main.go.tmpl", currDir, database),
-		"./main.go",
+		fmt.Sprintf("%s/templates/main/%s/main.go.tpl", currDir, database),
+		"./main.go.tpl",
 	).CombinedOutput()
 
 	exec.Command(
@@ -90,41 +91,96 @@ func copyFiles(database string, appPath string, currDir string) {
 		"config",
 	).CombinedOutput()
 
+	files := []string{
+		"application_controller.go",
+		"route_request.go.tpl",
+		"routes.go.tpl",
+	}
+
+	for _, file := range files {
+		exec.Command(
+			"cp", "-rf",
+			fmt.Sprintf("%s/templates/config/%s", currDir, file),
+			"config/",
+		).CombinedOutput()
+	}
+
 	exec.Command(
 		"cp", "-rf",
-		fmt.Sprintf("%s/templates/config/*", currDir),
-		"config",
+		fmt.Sprintf("%s/templates/spec/test_helper.go.tpl", currDir),
+		"spec",
 	).CombinedOutput()
 }
 
 func updateRouteRequest(appName string) {
-	data, _ := ioutil.ReadFile("config/route_request.go.tpl")
+	data, err := ioutil.ReadFile("./config/route_request.go.tpl")
+	fmt.Println(err)
 	tmpl, _ :=
 		template.
 			New("route_request").
 			Parse(string(data))
 	f, _ := os.Create("config/route_request.go")
-	w := bufio.NewWriter(f)
-	appData := AppData{appName: appName}
-	tmpl.Execute(w, appData)
+	appData := appData{Module: appName}
+	tmpl.Execute(f, appData)
 	f.Close()
 
 	exec.Command("rm", "-rf", "config/route_request.go.tpl").CombinedOutput()
 }
 
-func updateDatabaseToml(appName string) {
-	data, _ := ioutil.ReadFile("config/database.toml.tpl")
+func updateRouteFile(appName string) {
+	data, _ := ioutil.ReadFile("./config/routes.go.tpl")
 	tmpl, _ :=
 		template.
-			New("route_request").
+			New("routes").
 			Parse(string(data))
-	f, _ := os.Create("config/route_request.go")
-	w := bufio.NewWriter(f)
-	appData := AppData{appName: appName}
-	tmpl.Execute(w, appData)
+	f, _ := os.Create("config/routes.go")
+	appData := appData{Module: appName}
+	tmpl.Execute(f, appData)
 	f.Close()
 
-	exec.Command("rm", "-rf", "config/route_request.go.tpl").CombinedOutput()
+	exec.Command("rm", "-rf", "config/routes.go.tpl").CombinedOutput()
+}
+
+func updateDatabaseToml(appName string) {
+	data, _ := ioutil.ReadFile("./config/database.toml.tpl")
+	tmpl, _ :=
+		template.
+			New("database").
+			Parse(string(data))
+	f, _ := os.Create("config/database.toml")
+	appData := appData{Module: appName}
+	tmpl.Execute(f, appData)
+	f.Close()
+
+	exec.Command("rm", "-rf", "config/database.toml.tpl").CombinedOutput()
+}
+
+func updateMainFile(appName string) {
+	data, _ := ioutil.ReadFile("./main.go.tpl")
+	tmpl, _ :=
+		template.
+			New("main").
+			Parse(string(data))
+	f, _ := os.Create("main.go")
+	appData := appData{Module: appName}
+	tmpl.Execute(f, appData)
+	f.Close()
+
+	exec.Command("rm", "-rf", "main.go.tpl").CombinedOutput()
+}
+
+func updateTestHelper(appName string) {
+	data, _ := ioutil.ReadFile("./spec/test_helper.go.tpl")
+	tmpl, _ :=
+		template.
+			New("test_helper").
+			Parse(string(data))
+	f, _ := os.Create("spec/test_helper.go")
+	appData := appData{Module: appName}
+	tmpl.Execute(f, appData)
+	f.Close()
+
+	exec.Command("rm", "-rf", "spec/test_helper.go.tpl").CombinedOutput()
 }
 
 func searchAndReplaceProjectName(projectName string) {
@@ -215,7 +271,7 @@ func generateProjectFolder(appPath string, database string) {
 		fmt.Println(
 			"Getting github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql...")
 		exec.Command("go", "get",
-			"github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql").
+			"github.com/volatiletech/sqdboiler/drivers/sqlboiler-mysql").
 			CombinedOutput()
 	} else if database == "postgresql" {
 		fmt.Println(
@@ -240,18 +296,32 @@ func generateProjectFolder(appPath string, database string) {
 		Command("go", "get", "-u", "github.com/volatiletech/mig/...").
 		CombinedOutput()
 
+	fmt.Println("Getting github.com/integralist/go-findroot/find...")
+	exec.
+		Command("go", "get", "-u", "github.com/integralist/go-findroot/find").
+		CombinedOutput()
+
+	fmt.Println("Getting gopkg.in/testfixtures.v2...")
+	exec.
+		Command("go", "get", "-u", "gopkg.in/testfixtures.v2").
+		CombinedOutput()
+
 	fmt.Println("Getting sql-formatter-cli")
 	exec.
 		Command("npm", "i", "-g", "sql-formatter-cli").
 		CombinedOutput()
 
 	copyFiles(database, appPath, currDir)
-	updateRouteRequest(projectName)
 
 	exec.Command("chmod", "-R", "0755", ".").CombinedOutput()
 	c = color.New(color.FgGreen)
 
-	searchAndReplaceProjectName(projectName)
+	updateRouteRequest(projectName)
+	updateDatabaseToml(projectName)
+	updateMainFile(projectName)
+	updateTestHelper(projectName)
+	updateRouteFile(projectName)
+
 	fmt.Println()
 	createDatabase(projectName, database, "development", currDir)
 	createDatabase(projectName, database, "test", currDir)
