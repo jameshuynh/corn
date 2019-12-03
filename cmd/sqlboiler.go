@@ -20,6 +20,8 @@ func searchAndReplaceSQLBoilerConfig() {
 	replacers["GetInt(\"psql."] = "GetInt(\"test."
 	replacers["\"psql."] = "\"test."
 	replacers["REGEXP-var o \\[\\]\\*(\\w+)\\n"] = `var o []*$1 = make([]*$1, 0)`
+
+	replacers["encrypted_password,omitempty"] = "-"
 	helpers.SearchAndReplaceFiles(".", replacers)
 }
 
